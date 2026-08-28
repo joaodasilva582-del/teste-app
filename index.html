@@ -454,7 +454,7 @@
             "injesop": { pass: "sopro@1324", label: "INJEÇÃO E SOPRO", linhasPA: 25 },
             "decoracao": { pass: "deco@1324", label: "DECORAÇÃO", linhasPA: 15 },
             "dinamo": { pass: "dina@1324", label: "DÍNAMO", linhasPA: 10 },
-            "master": { pass: "master@1324", label: "MASTER", linhasPA: 80 },
+            "master": { pass: "master@1324", label: "MASTER", linhasPA: 100 },
             "engprocessos": { pass: "eng@1324", label: "ENGENHARIA DE PROCESSOS" }
         };
 
@@ -667,7 +667,7 @@
 
             if (setorLogado === "dinamo" || isMaster) {
                 const cm = document.getElementById('corpo-master-dinamo'); cm.innerHTML = "";
-                const limiteMaster = isMaster ? 80 : 10;
+                const limiteMaster = isMaster ? configSetores[setorLogado].linhasPA : 10;
                 for (let i = 0; i < limiteMaster; i++) {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -684,10 +684,16 @@
         }
 
         function separarCodigoLote(valor) {
-            const texto = (valor || "").trim();
+            // Mantém exatamente o conteúdo bipado/digitado.
+            // Apenas usa } ou | como separadores entre Código e Lote.
+            const texto = String(valor ?? "");
             const partes = texto.split(/[}|]/);
             if (partes.length < 2) return null;
-            return { codigo: partes[0].trim(), lote: partes[1].trim() };
+
+            return {
+                codigo: String(partes[0]),
+                lote: String(partes[1])
+            };
         }
 
         function bipe(el, i, prefix) {
@@ -1080,7 +1086,7 @@
 
             if (setorLogado === "master") {
                 const consolidados = new Map();
-                for (let i = 0; i < 80; i++) {
+                for (let i = 0; i < configSetores[setorLogado].linhasPA; i++) {
                     const campoLido = document.getElementById(`mst-lido-${i}`);
                     const campoQtd = document.getElementById(`mst-qtd-${i}`);
                     if (!campoLido || !campoQtd) continue;
